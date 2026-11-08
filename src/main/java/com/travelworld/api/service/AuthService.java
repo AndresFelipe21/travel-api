@@ -31,4 +31,16 @@ public class AuthService {
 
         return usuarioRepository.save(usuario);
     }
+
+    public Usuario login(String correo, String password){
+        String correoNormalizado = correo.trim().toLowerCase();
+
+        Usuario usuario = usuarioRepository.findByCorreo(correoNormalizado)
+                .orElseThrow(() -> new IllegalArgumentException("Correo o contraseña no encontrada"));
+        if(!passwordEncoder.matches(password, usuario.getPassword())){
+            throw new IllegalArgumentException("Correo o contraseña no encontrada");
+        }
+
+        return usuario;
+    }
 }
