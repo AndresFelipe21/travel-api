@@ -26,17 +26,23 @@ public class AuthController {
 
     @PostMapping("/registro")
     public ResponseEntity<Map<String, String>> registrar (@Valid @RequestBody RegistroRequest datos){
-        Usuario usuario = authService.registrar(
-                datos.nombre(),
-                datos.correo(),
-                datos.password()
-        );
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(Map.of(
-                        "mensaje", "Usuario registrado correctamente",
-                        "correo", usuario.getCorreo()
-                ));
+        try {
+            Usuario usuario = authService.registrar(
+                    datos.nombre(),
+                    datos.correo(),
+                    datos.password()
+            );
+            return ResponseEntity.status(HttpStatus.CREATED).body(Map.of(
+                    "mensaje", "Usuario registrado correctamente",
+                    "correo", usuario.getCorreo()
+            ));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity
+                    .status(HttpStatus.CONFLICT)
+                    .body(Map.of(
+                            "mensaje", e.getMessage()
+                    ));
+        }
     }
 
     @PostMapping("/login")
